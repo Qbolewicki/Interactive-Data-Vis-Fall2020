@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-
 #container {
   position: relative;
   top: 40px; 
@@ -13,12 +11,4 @@
 }
 body {
   background-color: #2f3033;
-=======
-body {
-    background-color: lavenderblush;
-    color :purple;
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 40px
-;
->>>>>>> 24c9d4802da30fff7c3edef5883e414b8a66332c
 }
