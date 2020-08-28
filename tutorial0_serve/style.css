@@ -1,0 +1,15 @@
+
+#container {
+  position: relative;
+  top: 40px; 
+  left: 40px;
+  background: image;
+}
+#animate {
+  position: fixed;
+  top: 100px; 
+  left: 50px;
+}
+body {
+  background-color: #2f3033;
+}
