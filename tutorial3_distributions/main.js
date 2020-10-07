@@ -1,4 +1,3 @@
-
 /**
  * CONSTANTS AND GLOBALS
  * */
@@ -15,11 +14,11 @@ let xScale;
 let yScale;
 
 /**
- * APPLICATION location
+ * APPLICATION Country
  * */
-let location = {
+let Country = {
   data: [],
-  selectedcountry: "All"
+  selectedLocation: "All"
 };
 
 /**
@@ -27,7 +26,7 @@ let location = {
  * */
 d3.json("../data/protests-europe-2009-2019.json", d3.autoType).then(raw_data => {
   console.log("raw_data", raw_data);
-  location.data = raw_data;
+  Country.data = raw_data;
   init();
 });
 
@@ -40,12 +39,12 @@ function init() {
   // SCALES
   xScale = d3
     .scaleLinear()
-    .domain(d3.extent(location.data, d => d.Participants_average))
+    .domain(d3.extent(Country.data, d => d.Participants_average))
     .range([margin.left, width - margin.right]);
 
   yScale = d3
     .scaleLinear()
-    .domain(d3.extent(location.data, d => d.State_response_level))
+    .domain(d3.extent(Country.data, d => d.State_response_level))
     .range([height - margin.bottom, margin.top]);
 
   // AXES
@@ -56,18 +55,17 @@ function init() {
   // add dropdown (HTML selection) for interaction
   // HTML select reference: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select
   const selectElement = d3.select("#dropdown").on("change", function() {
-    console.log("new selected country is", this.value);
+    console.log("new selected Location is", this.value);
     // `this` === the selectElement
     // this.value holds the dropdown value a user just selected
-    location.selectedcountry = this.value;
-    console.log("new value is", this.value);
+    Country.selectedLocation = this.value;
     draw(); // re-draw the graph based on this new selection
   });
 
   // add in dropdown options from the unique values in the data
   selectElement
     .selectAll("option")
-    .data(["All", "accomodate", "ignore", "crowd_dispersal", "arrests", "beatings", "shootings"]) // unique data values-- (hint: to do this programmatically take a look `Sets`)
+    .data(["All", "Athens", "Barcelona","Liverpool"]) // unique data values-- (hint: to do this programmatically take a look `Sets`)
     .join("option")
     .attr("value", d => d)
     .text(d => d);
@@ -109,19 +107,19 @@ function init() {
 
 /**
  * DRAW FUNCTION
- * we call this everytime there is an update to the data/location
+ * we call this everytime there is an update to the data/Country
  * */
 function draw() {
-  // filter the data for the selectedcountry
-  let filteredData = location.data;
-  // if there is a selectedcountry, filter the data before mapping it to our elements
-  if (location.selectedcountry !== "All") {
-    filteredData = location.data.filter(d => d.country === location.selectedcountry);
+  // filter the data for the selectedLocation
+  let filteredData = Country.data;
+  // if there is a selectedLocation, filter the data before mapping it to our elements
+  if (Country.selectedLocation !== "All") {
+    filteredData = Country.data.filter(d => d.Location === Country.selectedLocation);
   }
 
   const dot = svg
     .selectAll(".dot")
-    .data(filteredData, d => d.name) // use `d.name` as the `key` to match between HTML and data elements
+    .data(filteredData, d => d.Protest) // use `d.name` as the `key` to match between HTML and data elements
     .join(
       enter =>
         // enter selections -- all data elements that don't have a `.dot` element attached to them yet
@@ -131,12 +129,9 @@ function draw() {
           .attr("stroke", "lightgrey")
           .attr("opacity", 0.5)
           .attr("fill", d => {
-            if (d.country === "Albania") return "red";
-            if (d.country === "Armenia") return "yellow";
-            if (d.country === "Austria") return "green";
-            if (d.country === "Azerbaijan") return "green";
-            else if (d.country === "Belarus") return "purple";
-            else return "black";
+            if (d.Location === "Athens") return "red";
+            else if (d.Location === "Barcelona") return "green";
+            else return "yellow";
           })
           .attr("r", radius)
           .attr("cy", d => yScale(d.State_response_level))
@@ -144,7 +139,7 @@ function draw() {
           .call(enter =>
             enter
               .transition() // initialize transition
-              .delay(d => 500 * d.Participants_average) // delay on each element
+              .delay(d => 0 * d.Participants_average) // delay on each element
               .duration(500) // duration 500ms
               .attr("cx", d => xScale(d.Participants_average))
           ),
@@ -164,7 +159,7 @@ function draw() {
           // exit selections -- all the `.dot` element that no longer match to HTML elements
           exit
             .transition()
-            .delay(d => 50 * d.Participants_average)
+            .delay(d => 0 * d.Participants_average)
             .duration(500)
             .attr("cx", width)
             .remove()
