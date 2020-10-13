@@ -33,11 +33,13 @@ let state = {
 /**
  * LOAD DATA
  * */
-d3.csv("../data/populationOverTime.csv", d => ({
+d3.csv("../data/populationOverTime.csv", 
+d => ({
   year: new Date(d.Year, 0, 1),
   country: d.Entity,
   population: +d.Population,
-})).then(raw_data => {
+}))
+.then(raw_data => {
   console.log("raw_data", raw_data);
   state.data = raw_data;
   init();
