@@ -12,6 +12,7 @@ const width = window.innerWidth * 0.7,
  * All these variables are empty before we assign something to them.*/
 let svg;
 let xScale;
+let xAxis;
 let yScale;
 let yAxis;
 
@@ -28,9 +29,9 @@ let state = {
  * */
 d3.csv("../data/protests_1990-2019.csv", 
 d => ({
-  year_month: new Date (d.Year_month),
+  year_month: new Date(d.Year_month),
   country: d.Entity,
-  state_response_level: d.State_response_level,
+  state_response_level: +d.State_response_level,
 }))
 .then(raw_data => {
   console.log("raw_data", raw_data);
@@ -46,7 +47,7 @@ function init() {
   // SCALES
   xScale = d3
     .scaleTime()
-    .domain(d3.extent(state.data, d => d.year_month))
+    .domain(d3.extent (state.data, d => d.year_month))
     .range([margin.left, width - margin.right]);
 
   yScale = d3
@@ -55,8 +56,8 @@ function init() {
     .range([height - margin.bottom, margin.top]);
 
   // AXES
-  const xAxis = d3.axisBottom(xScale);
-  yAxis = d3.axisLeft(yScale);
+  xAxis = d3.axisBottom(xScale);
+  const yAxis = d3.axisLeft(yScale);
 
   // UI ELEMENT SETUP
   const selectElement = d3.select("#dropdown").on("change", function() {
@@ -98,7 +99,7 @@ function init() {
     .attr("class", "axis-label")
     .attr("x", "50%")
     .attr("dy", "3em")
-    .text("Year_month");
+    .text("Year");
 
   // add the yAxis
   svg
@@ -111,7 +112,7 @@ function init() {
     .attr("y", "50%")
     .attr("dx", "-3em")
     .attr("writing-mode", "vertical-rl")
-    .text("State_response_level");
+    .text("State Response Level");
 
     draw(); // calls the draw function
   }
@@ -128,19 +129,25 @@ function draw() {
   }
 
   // update the scale domain (now that our data has changed)
-  yScale.domain([0, d3.max(filteredData, d => d.state_response_level)]);
+  xScale.domain([d3.min(filteredData, d => d.year_month), d3.max(filteredData, d => d.year_month)]);
 
-  // re-draw our yAxix since our yScale is updated with the new data
-  d3.select("g.y-axis")
+  // re-draw our xAxis since our xScale is updated with the new data
+  d3.select("g.x-axis")
     .transition()
     .duration(1000)
-    .call(yAxis.scale(yScale)); // this updates the yAxis' scale to be our newly updated one
+    .call(xAxis.scale(xScale)); // this updates the xAxis' scale to be our newly updated one
 
   // we define our line function generator telling it how to access the x,y values for each point
   const lineFunc = d3
     .line()
     .x(d => xScale(d.year_month))
-    .y(d => yScale(d.state_response_level));
+    .y(d => yScale(d.state_response_level))
+
+  const areaFunc = d3
+    .area()
+    .x(d => xScale(d.year_month))
+    .y1(d => yScale(d.state_response_level))
+    .y0(yScale(0));
 
   const dot = svg
     .selectAll(".dot")
@@ -151,7 +158,7 @@ function draw() {
         enter
           .append("circle")
           .attr("class", "dot") // Note: this is important so we can identify it in future updates
-          .attr("r", radius)
+          .attr("r", radius - 3)
           .attr("cy", height - margin.bottom) // initial value - to be transitioned
           .attr("cx", d => xScale(d.year_month)),
       update => update,
@@ -160,7 +167,7 @@ function draw() {
           // exit selections -- all the `.dot` element that no longer match to HTML elements
           exit
             .transition()
-            .delay(d => d.year_month)
+            .delay(d => d.year)
             .duration(500)
             .attr("cy", height - margin.bottom)
             .remove()
@@ -176,7 +183,7 @@ function draw() {
           .attr("cy", d => yScale(d.state_response_level)) // started from the bottom, now we're here
     );
 
-  const line = svg
+    const line = svg
     .selectAll("path.trend")
     .data([filteredData])
     .join(
@@ -184,15 +191,26 @@ function draw() {
         enter
           .append("path")
           .attr("class", "trend")
-          .attr("opacity", 0), // start them off as opacity 0 and fade them in
-      update => update, // pass through the update selection
-      exit => exit.remove()
+          .attr("opacity", 0.5), // start them off as opacity 0 and fade them in
+      update => 
+        update,
+      exit => 
+        exit
+          .transition()
+          .remove(),
     )
     .call(selection =>
       selection
         .transition() // sets the transition on the 'Enter' + 'Update' selections together.
-        .duration(1000)
-        .attr("opacity", 1)
+        .duration(500)
         .attr("d", d => lineFunc(d))
-    );
+        )
+
+    const area = svg
+    .selectAll(".area")
+    .data([filteredData])
+    .join("path")
+    .attr("class", "area")
+    .attr("cx", (width - margin.left))
+    .attr("d", d => areaFunc(d));
 }

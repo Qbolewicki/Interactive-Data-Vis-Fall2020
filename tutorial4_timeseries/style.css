@@ -24,4 +24,11 @@ body {
   .trend {
     fill: none;
     stroke: black;
+    stroke-width: 2;
+    opacity: 0.75;
+  }
+
+  .area {
+    fill: teal;
+    opacity: .5;
   }
