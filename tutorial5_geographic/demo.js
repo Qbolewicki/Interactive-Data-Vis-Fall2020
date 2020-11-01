@@ -20,7 +20,6 @@ let state = {
     latitude: null,
     longitude: null,
     state: null,
-    extremes: null,
   },
 };
 
@@ -68,55 +67,32 @@ function init() {
       state.hover["state"] = d.properties.NAME;
       draw(); // re-call the draw function when we set a new hoveredState
     });
-  //Add point to map
-  const dot = { circle: d => d.extremes}
+
+  // EXAMPLE 1: going from Lat-Long => x, y
+  // for how to position a dot
+  const GradCenterCoord = { latitude: 40.7423, longitude: -73.9833 };
   svg
     .selectAll("circle")
-    .data(state.extremes)
+    .data([GradCenterCoord])
     .join("circle")
-    .attr("transform", d => {
-      const [x, y] = projection([d.longitude, d.latitude]);
-      return `translate(${x}, ${y})`})
-    .attr ("fill", d => {if (d.extremes > 0) return "#FEB938";
-    else if (d.extremes === 0) return "transparent"
-      else return "#6BBCD1";
-    })
-    .attr ("r", d => {if (d.extremes > 0) return "12";
-    else if (d.extremes === 0) return "0"
-      else return "12";
-    })
-
-  //Add lat long on hover
-  const Latlong = { latitude: d => d.latitude, longitude: d => d.longitude};
-  svg
-    .selectAll("Latlong")
-    .data(Latlong)
-    .join("Latlong")
     .attr("r", 20)
-    .attr("fill", "red")
+    .attr("fill", "steelblue")
     .attr("transform", d => {
       const [x, y] = projection([d.longitude, d.latitude]);
       return `translate(${x}, ${y})`;
     });
 
-  const temp = { extremes: d => d.extremes};
-  svg
-    .selectAll("temp")
-    .data(temp)
-    .join("temp")
-    .attr("transform", d => {
-      const [x, y] = projection([d.longitude, d.latitude]);
-      return d => d.extremes;
-    });
-
+  // EXAMPLE 2: going from x, y => lat-long
+  // this triggers any movement at all while on the svg
   svg.on("mousemove", () => {
+    // we can use d3.mouse() to tell us the exact x and y positions of our cursor
     const [mx, my] = d3.mouse(svg.node());
+    // projection can be inverted to return [lat, long] from [x, y] in pixels
     const proj = projection.invert([mx, my]);
     state.hover["longitude"] = proj[0];
     state.hover["latitude"] = proj[1];
-    state.hover["extremes"] = proj[2]
     draw();
-   });
+  });
 
   draw(); // calls the draw function
 }

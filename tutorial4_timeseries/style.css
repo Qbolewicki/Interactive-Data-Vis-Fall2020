@@ -5,6 +5,9 @@ body {
     padding: 1em 3em;
   }
   
+  .circle {
+    opacity: .50;
+  }
   .dot {
     cursor: pointer;
     color: steelblue;
