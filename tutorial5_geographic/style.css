@@ -1,0 +1,19 @@
+body {
+    /* ref: https://fonts.google.com/specimen/Source+Sans+Pro?selection.family=Source+Sans+Pro */
+    font-family: "Source Sans Pro", sans-serif;
+    padding: 1em 3em;
+    background: radial-gradient(ellipse at top, #d0d0d0, transparent),
+            radial-gradient(ellipse at bottom, #DDDDD8, transparent);
+  }
+ 
+  circle {
+    opacity: .50;
+  }
+  path.state {
+    stroke: lightgray;
+    fill:  #2F2F2F;
+  }
+  #tooltip {
+    display: block;
+    height: 50px;
+  }
