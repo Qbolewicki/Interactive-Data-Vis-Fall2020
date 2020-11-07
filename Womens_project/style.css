@@ -3,12 +3,10 @@ body {
     font-family: 'Source Sans Pro', sans-serif;
     padding: 1em 3em;
   }
-  
-  .label {
-    fill: white;
-    text-anchor: middle;
+
+  .tick {
+    fill: red
   }
-  
-  .axis {
-    font-size: 16px;
+  .axis-label {
+    fill: green
   }

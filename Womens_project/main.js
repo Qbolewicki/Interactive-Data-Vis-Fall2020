@@ -1,10 +1,10 @@
 /** 
 * CONSTANTS AND GLOBALS 
 * */
-const width = window.innerWidth * 0.9,
+const width = window.innerWidth * 0.7,
 height = window.innerHeight * 0.7,
   paddingInner = 0.2,
-  margin = { top: 20, bottom: 50, left: 40, right: 40 };
+  margin = { top: 20, bottom: 50, left: 60, right: 40 },
   default_selection = "Select a Service";
 
 let svg;
@@ -39,7 +39,7 @@ function init() {
     .paddingInner(paddingInner);
   yScale = d3
     .scaleLinear()
-    .domain(d3.extent(focus1.data,d => d.OrganizationNumber))
+    .domain(d3.extent(focus1.data, d => d.OrganizationNumber))
     .range([height - margin.bottom, margin.top]);
   
   const xAxis = d3.axisBottom(xScale);
@@ -100,16 +100,6 @@ function init() {
     .attr("writing-mode", "vertical-rl")
     .text("Number of Organizations");
   
-  const rect = svg
-    .selectAll("rect")
-    .data(filteredData, d => d.focus1) // use `d.name` as the `key` to match between HTML and data elements
-    .join("rect")
-    .attr("y", d => yScale(d.OrganizationNumber))
-    .attr("x", d => xScale(d.Borough))
-    .attr("width", xScale.bandwidth())
-    .attr("height", d => height - margin.bottom - yScale(d.count))
-    .attr("fill", "steelblue");
-  
   draw();
 }
 /**
@@ -122,4 +112,44 @@ function draw() {
   // if there is a selectedLocation, filter the data before mapping it to our elements
   if (focus1.selectedFocus !== null) {
     filteredData = focus1.data.filter(d => d.focus1 === selectedFocus);
-  }};
+  }
+  const rect = svg
+  .selectAll("rect")
+  .data(filteredData, d => d.focus1) // use `d.name` as the `key` to match between HTML and data elements
+  .join(
+    enter =>
+      // enter selections -- all data elements that don't have a `.dot` element attached to them yet
+      enter
+        .append("rect")
+        .attr("class", "rect") // Note: this is important so we can identify it in future updates
+        .attr("x", d => xScale(d.Borough))
+        .attr("y", d => margin.bottom) // initial value - to be transitioned
+        .call(enter =>
+          enter
+            .transition() // initialize transition
+            .delay(d => 0 * d.Borough) // delay on each element
+            .duration(1000) // duration 1000ms
+            .attr("y", d => yScale(d.OrganizationNumber))
+        ),
+    update =>
+      update.call(update =>
+        // update selections -- all data elements that match with a `.dot` element
+        update
+          .transition()
+          .duration(1000)
+          .transition()
+          .duration(250)
+          .attr("stroke", "lightgrey")
+      ),
+    exit =>
+      exit.call(exit =>
+        // exit selections -- all the `.dot` element that no longer match to HTML elements
+        exit
+          .transition()
+          .delay(d => 0 * d.Borough)
+          .duration(1000)
+          .attr("y", height - margin.bottom)
+          .remove()
+      )
+  );
+}
