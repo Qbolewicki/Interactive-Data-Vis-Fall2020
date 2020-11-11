@@ -7,6 +7,11 @@ body {
   .tick {
     fill: red
   }
+
   .axis-label {
     fill: green
+  }
+
+  .rect {
+    fill:orange
   }
