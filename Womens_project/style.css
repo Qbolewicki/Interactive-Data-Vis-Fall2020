@@ -4,12 +4,10 @@ body {
     padding: 1em 3em;
   }
 
-  .tick {
-    fill: red
-  }
-
   .axis-label {
-    fill: green
+      font-size: 14px;
+      fill: black;
+      text-anchor: middle;
   }
 
   .rect {
