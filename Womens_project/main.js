@@ -38,7 +38,7 @@ function init() {
   xScale = d3
     .scaleBand()
     .domain(Array.from(new Set(focus1.data.map(d => d.Borough))))
-    .range([margin.left, width - margin.right]);
+    .range([margin.left, width - margin.right])
     .paddingInner(paddingInner);
 
   console.log(Array.from(new Set(focus1.data.map(d => d.Borough))))
@@ -85,7 +85,7 @@ const yAxis = d3.axisLeft(yScale);
     .attr("height", height);
   
       // append rects
-  const rect = svg
+const rect = svg
   .selectAll("rect")
   .data(data)
   .join("rect")
