@@ -1,15 +1,17 @@
 body {
-    /* ref: https://fonts.google.com/specimen/Source+Sans+Pro?selection.family=Source+Sans+Pro */
-    font-family: 'Source Sans Pro', sans-serif;
-    padding: 1em 3em;
-  }
+  font: 10px sans-serif;
+}
+select {
+  display: block;
+}
+.bar {
+  fill: purple;
+  opacity: 0.8;
+}
 
-  .axis-label {
-      font-size: 14px;
-      fill: black;
-      text-anchor: middle;
-  }
-
-  .rect {
-    fill:orange
-  }
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
