@@ -1,17 +1,6 @@
-body {
-  font: 10px sans-serif;
+text {
+  fill: black;
 }
-select {
-  display: block;
-}
-.bar {
-  fill: purple;
-  opacity: 0.8;
-}
-
-.axis path,
-.axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
+.bars {
+  fill: black;
 }

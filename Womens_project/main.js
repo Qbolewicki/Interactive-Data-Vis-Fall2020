@@ -23,7 +23,33 @@ d3.autoType )
   focus1.data = raw_data;
 init();
 });
+
 function init() {
+console.log (d3.rollup)
+
+const barData = d3.rollups(focus1.data, v => v.length, d => d.Borough)
+.map(([borough, count]) => ({borough: borough, count: count }))
+
+console.log(barData)
+
+//SCALES
+xScale = d3
+  .scaleBand()
+  .domain(Array.from(new Set(focus1.data.map(d => d.Borough))))
+  .range([margin.left, width - margin.right])
+  .paddingInner(paddingInner);
+
+  console.log(Array.from(new Set(focus1.data.map(d => d.Borough))))
+
+yScale = d3
+  .scaleLinear()
+  .domain(focus1.data.map, v => v.length, d => d.Borough)
+  .range([height - margin.bottom, margin.top]);
+
+  console.log(focus1.data, v => v.length, d => d.Borough)
+
+const xAxis = d3.axisBottom(xScale);
+const yAxis = d3.axisLeft(yScale);
 
 // UI ELEMENT SETUP
 const selectElement = d3.select("#dropdown").on("change", function() {
@@ -42,73 +68,81 @@ selectElement
   .join("option")
   .attr("value", d => d)
   .text(d => d);
-  
-// this ensures that the selected value is the same as what we have in state when we initialize the options
 selectElement.property("value", default_selection);
 
-//SCALES
-xScale = d3
-  .scaleBand()
-  .domain(Array.from(new Set(focus1.data.map(d => d.Borough))))
-  .range([margin.left, width - margin.right])
-  .paddingInner(paddingInner);
-  console.log(Array.from(new Set(focus1.data.map(d => d.Borough))))
+  /** MAIN CODE */
+  svg = d3
+    .select("#d3-container")
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height);
 
-yScale = d3
-  .scaleLinear()
-  .domain(0, d3.max(focus1.data, d => d.OrganizationNumber))
-  .range([height - margin.bottom, margin.top]);
+  // add the xAxis
+  svg
+    .append("g")
+    .attr("class", "axis x-axis")
+    .attr("transform", `translate(0,${height - margin.bottom})`)
+    .call(xAxis)
+    .append("text")
+    .attr("class", "axis-label")
+    .attr("x", "50%")
+    .attr("dy", "3em")
+    .text("Borough");
 
-const xAxis = d3.axisBottom(xScale).ticks(data.length);
-const yAxis = d3.axisLeft(yScale);
-  
-svg
-  .append("g")
-  .attr("class", "axis")
-  .attr("transform", `translate(0, ${height - margin.bottom})`)
-  .call(xAxis);
+  // add the yAxis
+  svg
+    .append("g")
+    .attr("class", "axis y-axis")
+    .attr("transform", `translate(${margin.left},0)`)
+    .call(yAxis)
+    .append("text")
+    .attr("class", "axis-label")
+    .attr("y", "50%")
+    .attr("dx", "-3em")
+    .attr("writing-mode", "vertical-rl")
+    .text("Number of Locations");
 
-draw();
+  draw();
 }
+
 //DRAW FUNCTION
 function draw() {
   let filteredData = [];
   if (focus1.selectedFocus !== "All") {
-    filteredData = focus1.data.filter(d => d.Focus === focus1.selectedFocus);
+    filteredData = focus1.data.filter(d => d.focus1 === focus1.selectedFocus);
   }
-  const rect = svg
-    .selectAll("rect")
-    .data(filteredData, d => d.focus1)
+
+  const bars = svg
+    .selectAll(".bars")
+    .data(filteredData, d => d.name)
     .join(
       enter =>
         enter
-          .append("rect")
-          .attr("class", "rect")
+          .append("bars")
+          .attr("class", "bars")
           .attr("x", d => xScale(d.Borough))
-          .attr("y", d => margin.bottom) // initial value - to be transitioned
+          .attr("y", d => yScale(d.Borough))
+          .attr("width", xScale.bandwidth())
+          .attr("height", d => height - margin.bottom - yScale(d.OrganizationNumber))
           .call(enter =>
             enter
               .transition()
-              .delay(d => 0 * d.Borough)
-              .duration(1000) // duration
-              .attr("y", d => yScale(d.OrganizationNumber))
+              .duration(500)
+              .attr("y", d => yScale(d.Borough))
           ),
       update =>
         update.call(update =>
           update
             .transition()
-            .duration(1000)
-            .transition()
             .duration(250)
-            .attr("stroke", "lightgrey")
         ),
       exit =>
         exit.call(exit =>
           exit
             .transition()
-            .delay(d => 0 * d.Borough)
-            .duration(1000)
-            .attr("cy", height - margin.bottom)
+            .delay(d => 50 * d.Borough)
+            .duration(500)
+            .attr("y", height - margin.bottom)
             .remove()
         )
     );

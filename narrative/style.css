@@ -1,0 +1,26 @@
+body {
+  /* ref: https://fonts.google.com/specimen/Source+Sans+Pro?selection.family=Source+Sans+Pro */
+  font-family: "Source Sans Pro", sans-serif;
+  padding: 1em 3em;
+  background: radial-gradient(ellipse at top, #e3e3e3, transparent),
+          radial-gradient(ellipse at bottom, #ffffff, transparent);
+}
+
+circle {
+  stroke: #485b59;
+  fill: #627b78;
+  opacity: .50;
+}
+path.borough {
+  stroke: #a7a8a5;
+  fill:  #cecfcb;
+}
+path.hover {
+  opacity: 0.5;
+}
+
+#tooltip {
+  display: block;
+  height: 50px;
+}
+
