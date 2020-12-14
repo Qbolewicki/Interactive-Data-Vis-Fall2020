@@ -36,51 +36,82 @@ Promise.all([
 function init() {
   // our projection and path are only defined once, and we don't need to access them in the draw function,
   // so they can be locally scoped to init()
-  const projection = d3.geoAlbers().fitSize([width, height], borough.geojson);
+  const projection = d3.geoAlbers()
+    .center([4, 47])                // GPS of location to zoom on
+    .scale(1020)   
+    .fitSize([width/1, height/1], borough.geojson);
   const path = d3.geoPath().projection(projection);
 
-  // create an svg element in our main `d3-container` element
   svg = d3
-    .select("#d3-container")
+    .select("#my_dataviz")
     .append("svg")
     .attr("width", width)
     .attr("height", height);
-
+    
   svg
-    .selectAll(".borough")
+    .selectAll("#my_dataviz")
     // all of the features of the geojson, meaning all the states as individuals
     .data(borough.geojson.features)
     .join("path")
     .attr("d", path)
     .attr("class", "borough")
     .attr("fill", "transparent")
-    .on("mouseover", d => {
-      // when the mouse rolls over this feature, do this
-      borough.hover["borough"] = d.properties.NAME;
-      draw(); // re-call the draw function when we set a new hoveredState
-    });
+    
+     // create a tooltip
+  var Tooltip = d3.select("#my_dataviz")
+    .append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 1)
+    .style("border", "")
+    .style("border-width", "2px")
+    .style("border-radius", "5px")
+    .style("padding", "5px")
+
+     var mouseover = function(d) {
+      Tooltip
+      .style("opacity", 1)
+    }
+
+    var mousemove = function(d) {
+      Tooltip
+        .html("Primary Service: " + d.focus1 
+           + "<br>" 
+           + "Secondary Service: " + d.focus2 
+           + "<br>" 
+           + "Streeet Address: " + d.Address1 
+           + "<br>" 
+           + "Borough: " + d.boro_name)
+        .style("left", (d3.mouse(this)[0]+10) + "px")
+        .style("top", (d3.mouse(this)[1]) + "px")
+    }
+
+    var mouseleave = function(d) {
+      Tooltip
+      .style("opacity", 0)
+    }
+
   //Add point to map
-  const dot = { circle: d => d.OrganizationNumber}
+  const dot = {circle: d => d.OrganizationNumber}
   svg
     .selectAll("circle")
     .data(borough.OrganizationNumber)
-    .join("circle")
+    .enter()
+    .append("circle")
     .attr("r", 5)
     .attr("transform", d => {
       const [x, y] = projection([d.longitude, d.latitude]);
-      return `translate(${x}, ${y})`;
-    });
-  
+      return `translate(${x}, ${y})`})
+    .on("mouseover", mouseover)
+    .on("mousemove", mousemove)
+    .on("mouseleave", mouseleave)
+ 
     let zoom = d3.zoom()
-      .scaleExtent([1, 40])
-      .translateExtent([[0.8, 0.6], [width, height]])
-      .extent([[0.8, 0.6], [width, height]])
-      .on('zoom', () => {
-        svg.attr('transform', d3.event.transform)
+       .scaleExtent([1, 2])
+       .on('zoom', () => {
+           svg.attr('transform', d3.event.transform)
        });
-     
-    svg.call(zoom);
-
+ svg.call(zoom);
+ 
   draw(); // calls the draw function
 }
 
@@ -89,19 +120,5 @@ function init() {
  * we call this everytime there is an update to the data/borough
  * */
 function draw() {
-  // return an array of [key, value] pairs
-  hoverData = Object.entries(borough.hover);
 
-  d3.select("#hover-content")
-    .selectAll("div.row")
-    .data(hoverData)
-    .join("div")
-    .attr("class", "row")
-    .html(
-      d =>
-        // each d is [key, value] pair
-        d[1] // check if value exist
-          ? `${d[0]}: ${d[1]}` // if they do, fill them in
-          : null // otherwise, show nothing
-    );
 }

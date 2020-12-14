@@ -19,8 +19,12 @@ path.hover {
   opacity: 0.5;
 }
 
-#tooltip {
-  display: block;
-  height: 50px;
+circle:hover{
+  stroke: black;
+  stroke-width: 3px;
+}
+
+.tooltip {
+  background-color: transparent;
 }
 
