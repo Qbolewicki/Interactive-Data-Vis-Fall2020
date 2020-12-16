@@ -1,7 +1,7 @@
 /**
  * CONSTANTS AND GLOBALS
  * */
-const width = window.innerWidth * 0.9,
+const width = window.innerWidth * 0.4,
   height = window.innerHeight * 0.7,
   margin = { top: 10, bottom: 10, left: 10, right: 10};
 
@@ -47,6 +47,12 @@ function init() {
     .append("svg")
     .attr("width", width)
     .attr("height", height);
+
+     // create a tooltip
+     var Tooltip = d3.select("#my_dataviz")
+     .append("div")
+     .attr("class", "tooltip")
+     .style("opacity", 1)
     
   svg
     .selectAll("#my_dataviz")
@@ -56,18 +62,9 @@ function init() {
     .attr("d", path)
     .attr("class", "borough")
     .attr("fill", "transparent")
-    
-     // create a tooltip
-  var Tooltip = d3.select("#my_dataviz")
-    .append("div")
-    .attr("class", "tooltip")
-    .style("opacity", 1)
-    .style("border", "")
-    .style("border-width", "2px")
-    .style("border-radius", "5px")
-    .style("padding", "5px")
+  
 
-     var mouseover = function(d) {
+    var mouseover = function(d) {
       Tooltip
       .style("opacity", 1)
     }
@@ -105,12 +102,6 @@ function init() {
     .on("mousemove", mousemove)
     .on("mouseleave", mouseleave)
  
-    let zoom = d3.zoom()
-       .scaleExtent([1, 2])
-       .on('zoom', () => {
-           svg.attr('transform', d3.event.transform)
-       });
- svg.call(zoom);
  
   draw(); // calls the draw function
 }

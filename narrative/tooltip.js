@@ -1,4 +1,3 @@
-<script>
 
 // Size ?
 var width = 460

@@ -26,5 +26,23 @@ circle:hover{
 
 .tooltip {
   background-color: transparent;
+  text-align: center;
+  color: rgb(89, 89, 89)
 }
+
+.flex-container {
+  display: flex;
+  flex-flow: column wrap;
+  width: 45%;
+  height: 800px;
+  font-size: 14pt;
+}
+
+.flex-child {
+  flex: 0;
+}  
+
+.flex-child:first-child {
+  margin-right: 20px;
+} 
 

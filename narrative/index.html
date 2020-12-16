@@ -3,25 +3,36 @@
     <meta charset="utf-8">
 
     <!-- this is the title that goes in the browser tab name  -->
-    <title>Interactive Data Visualization Tutorial</title>
+    <title>Womens Services in NYC</title>
 
     <!-- custom font: https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./style.css">
   </head>
-  <body>
-    <header><center>
-      <h1>Womens Services</h1>
-      <h2>in New York City</h2>
-    </center></header>
+      <h1><center>Womens Services in New York City</center></h1>
+    </div>
+    
+  <!--Main text-->
+    <div class="flex-container">
 
-    <!-- all we need is an element to select -->
-
+      <div class="flex-child magenta">
+        <p>New York City, the most populated city in the United States, is home to 18.8 million residents. Of these residents, 52% identify as female. Historically the female population has been underrepresented in government and socially marginalized. My goal of this project was to create a visual representation of data to benefit women that is otherwise difficult to interpret and decipher.</p>
+        <p>NYC open data, which provided the source code for this project, is a compilation of publicly available datasets produced and used by New York City government. This data is often presented in tables that become an arduous task to navigate in their raw state. My intention is to make the data about services available to women throughout the city comprehensive and familiar. </p>
+        <p>I chose a minimalist color palette for the base map to draw attention to clusters of services within the boroughs. The viewer can hover over the points in the map to see more information about the services being offered, as well as their exact location. </p>
+      </div>
+      
+      <div class="flex-child green">
+        <div id="my_dataviz"></div>
+      </div>
+      
+    </div>
+      
+    </div>
+    <div id="dashboard"></div>
     <div id="my_dataviz"></div>
-    <div id=".borough"></div>
     <!-- this is the line that loads in d3 -->
     <script src="../lib/d3.js"></script>
     <!-- this is the line that loads in the main js script -->
     <script src="./main.js"></script>
-  </body>
+
 </html>
